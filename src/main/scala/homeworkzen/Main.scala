@@ -16,10 +16,9 @@ object Main extends App {
   println(s"Server online at http://${Config.Api.interface}:${Config.Api.port}/")
   println("Server initialization done.")
   println("Press RETURN to stop server...")
-  StdIn.readLine() // let it run until user presses return
+  StdIn.readLine()
   println("Stopping server...")
-  httpBinding
-    .flatMap(_.unbind()) // trigger unbinding from the port
+  httpBinding.flatMap(_.unbind()) // trigger unbinding from the port
     .onComplete(_ => actorSystem.terminate()) // and shutdown when done
   println("Server stopped.")
 }
