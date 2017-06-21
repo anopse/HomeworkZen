@@ -9,10 +9,11 @@ import akka.http.scaladsl.{Http, server}
 import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import homeworkzen.Config
-import homeworkzen.auth.Hasher
-import homeworkzen.auth.message._
+import homeworkzen.domain.message._
 import homeworkzen.model.UserEntry
-import homeworkzen.rest.RequestJsonSupport._
+import homeworkzen.rest.DTOJsonSupport._
+import homeworkzen.rest.dto.RegisterUserRequestDTO
+import homeworkzen.util.Hasher
 
 import scala.concurrent.Future
 
@@ -21,15 +22,15 @@ object Routes {
   def bindRoutes(authManager: ActorRef)(implicit system: ActorSystem, materializer: ActorMaterializer): Future[Http.ServerBinding] =
     Http().bindAndHandle(routes(authManager), Config.Api.interface, Config.Api.port)
 
-  private def routes(authManager: ActorRef)(implicit system: ActorSystem): server.Route =
+  private def routes(userManager: ActorRef)(implicit system: ActorSystem): server.Route =
     path("register") {
       post {
-        entity(as[UserRegistrationRequest]) { request =>
-          val auth = (authManager ? request) (Config.Api.authTimeout).mapTo[UserRegistrationResult]
+        entity(as[RegisterUserRequestDTO]) { request =>
+          val auth = (userManager ? request.toCommand) (Config.Api.authTimeout).mapTo[CreateUserResult]
           onSuccess(auth) {
-            case UserRegistrationResult(_, Right(id)) =>
+            case CreateUserResult(_, Right(id)) =>
               complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, s"success ${request.username} -> $id"))
-            case UserRegistrationResult(_, Left(e)) =>
+            case CreateUserResult(_, Left(e)) =>
               complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, s"failure ${request.username} -> $e"))
           }
         }
@@ -39,7 +40,7 @@ object Routes {
         def myUserPassAuthenticator(credentials: Credentials): Future[Option[UserEntry]] =
           credentials match {
             case p@Provided(username) =>
-              val result = (authManager ? GetUserEntryRequest(username)) (Config.Api.authTimeout).mapTo[GetUserEntryResult]
+              val result = (userManager ? GetUserEntryRequest(username)) (Config.Api.authTimeout).mapTo[GetUserEntryResult]
               import system.dispatcher
               result.map {
                 case GetUserEntryResult(_, Left(_)) => None

@@ -1,4 +1,4 @@
-package homeworkzen.auth.message
+package homeworkzen.domain.message
 
 import homeworkzen.model.UserEntry
 
@@ -9,5 +9,3 @@ object UsernameNotFound extends GetUserEntryError
 case class GetUserEntryRequest(username: String)
 
 case class GetUserEntryResult(request: GetUserEntryRequest, result: Either[GetUserEntryError, UserEntry])
-
-

@@ -1,4 +1,4 @@
-package homeworkzen.auth
+package homeworkzen.util
 
 import java.math.BigInteger
 import java.security.MessageDigest
