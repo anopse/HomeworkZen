@@ -9,7 +9,7 @@ import homeworkzen.model._
 
 import scala.collection.mutable
 
-class UserManager extends Actor {
+class AuthManager extends Actor {
 
   // todo : persist user registration
   private val users: mutable.HashMap[String, UserEntry] = mutable.HashMap.empty
@@ -29,8 +29,7 @@ class UserManager extends Actor {
   private def handle(request: UserRegistrationRequest): Unit = {
     // todo : optionnaly add password & username requirements
     val result = Either.cond(!users.contains(request.username), {
-      val id = UserId(UUID.randomUUID())
-      val newEntry = UserEntry(id, request.username, Hasher(request.password))
+      val newEntry = UserEntry(UUID.randomUUID(), request.username, Hasher(request.password))
       users += request.username -> newEntry
       newEntry
     }, UsernameAlreadyExist)

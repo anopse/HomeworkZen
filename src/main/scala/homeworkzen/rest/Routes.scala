@@ -18,14 +18,14 @@ import scala.concurrent.Future
 
 object Routes {
 
-  def bindRoutes(userManager: ActorRef)(implicit system: ActorSystem, materializer: ActorMaterializer): Future[Http.ServerBinding] =
-    Http().bindAndHandle(routes(userManager), Config.Api.interface, Config.Api.port)
+  def bindRoutes(authManager: ActorRef)(implicit system: ActorSystem, materializer: ActorMaterializer): Future[Http.ServerBinding] =
+    Http().bindAndHandle(routes(authManager), Config.Api.interface, Config.Api.port)
 
-  private def routes(userManager: ActorRef)(implicit system: ActorSystem): server.Route =
+  private def routes(authManager: ActorRef)(implicit system: ActorSystem): server.Route =
     path("register") {
       post {
         entity(as[UserRegistrationRequest]) { request =>
-          val auth = (userManager ? request) (Config.Api.authTimeout).mapTo[UserRegistrationResult]
+          val auth = (authManager ? request) (Config.Api.authTimeout).mapTo[UserRegistrationResult]
           onSuccess(auth) {
             case UserRegistrationResult(_, Right(id)) =>
               complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, s"success ${request.username} -> $id"))
@@ -39,7 +39,7 @@ object Routes {
         def myUserPassAuthenticator(credentials: Credentials): Future[Option[UserEntry]] =
           credentials match {
             case p@Provided(username) =>
-              val result = (userManager ? GetUserEntryRequest(username)) (Config.Api.authTimeout).mapTo[GetUserEntryResult]
+              val result = (authManager ? GetUserEntryRequest(username)) (Config.Api.authTimeout).mapTo[GetUserEntryResult]
               import system.dispatcher
               result.map {
                 case GetUserEntryResult(_, Left(_)) => None
