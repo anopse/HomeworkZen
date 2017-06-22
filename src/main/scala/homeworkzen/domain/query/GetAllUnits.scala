@@ -6,8 +6,8 @@ import akka.actor.ActorSystem
 import akka.persistence.query.PersistenceQuery
 import akka.persistence.query.journal.leveldb.scaladsl.LeveldbReadJournal
 import akka.stream.ActorMaterializer
-import homeworkzen.domain.command.message.{DepositEvent, UnitCreatedEvent, WithdrawEvent}
-import homeworkzen.model.{UnitInfo, UserId}
+import homeworkzen.domain.command.message.{DepositEvent, UnitCreatedEvent, UnitEvent, WithdrawEvent}
+import homeworkzen.model.{UnitId, UnitInfo, UserId}
 
 import scala.concurrent.Future
 
@@ -40,4 +40,41 @@ object GetAllUnits {
             })
         }).map(_.values.toSeq)(actorSystem.dispatcher)
   }
+
 }
+
+object GetSpecificUnit {
+
+  def apply(user: UserId, unitId: UnitId)(implicit actorSystem: ActorSystem,
+                                          actorMaterializer: ActorMaterializer): Future[Option[UnitInfo]] = {
+    val queries = PersistenceQuery(actorSystem).readJournalFor[LeveldbReadJournal](LeveldbReadJournal.Identifier)
+    val source = queries.currentEventsByTag(s"${user.id}")
+    source.map(_.event)
+      .collect {
+        case created: UnitCreatedEvent => created
+        case withdraw: WithdrawEvent => withdraw
+        case deposit: DepositEvent => deposit
+      }
+      .runFold(Map.empty: Map[UUID, UnitInfo])((map, event) =>
+        event match {
+          case event: UnitEvent if event.unitId != unitId => map // ignore event of other units
+          case created: UnitCreatedEvent => map +
+            (created.unitId.id -> UnitInfo(created.unitId, created.unitType, created.maximumCapacity, 0))
+          case withdraw: WithdrawEvent => map +
+            (withdraw.unitId.id -> {
+              val value = map(withdraw.unitId.id)
+              value.copy(currentAmount = value.currentAmount - withdraw.amountWithdrawn)
+            })
+          case deposit: DepositEvent => map +
+            (deposit.unitId.id -> {
+              val value = map(deposit.unitId.id)
+              value.copy(currentAmount = value.currentAmount + deposit.amountDeposited)
+            })
+        })
+      .map(infosMap => infosMap.values.toList match {
+        case value :: Nil => Some(value)
+        case _ => None
+      })(actorSystem.dispatcher)
+  }
+}
+

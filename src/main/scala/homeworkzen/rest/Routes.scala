@@ -22,7 +22,8 @@ object Routes {
   def routes: Seq[RestRoute] =
     List(rest.routes.users.Post,
       rest.routes.stations.Get,
-      rest.routes.stations.Post
+      rest.routes.stations.Post,
+      rest.routes.stations.id.Get
     )
 
 }

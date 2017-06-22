@@ -6,7 +6,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 import akka.http.scaladsl.server.Directives.complete
 import akka.http.scaladsl.server.StandardRoute
-import homeworkzen.model.UnitInfo
+import homeworkzen.model.{UnitId, UnitInfo}
 import homeworkzen.rest.dto.UnitInfoDTO
 import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
@@ -26,11 +26,22 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
     complete(statusCode -> body)
   }
 
+  def successUnitInfo(statusCode: StatusCode, value: UnitInfo): StandardRoute = {
+    val dto = UnitInfoDTO.fromUnitInfo(value)
+    val body = SingleUnitInfoResponseTemplate(statusCode.intValue, "success", dto)
+    complete(statusCode -> body)
+  }
+
   def success(statusCode: StatusCode): StandardRoute =
     complete(statusCode -> ResponseTemplate(statusCode.intValue, "success"))
 
   def failure(statusCode: StatusCode, message: String): StandardRoute =
     complete(statusCode -> ResponseTemplate(statusCode.intValue, message))
+
+  def notFound(unitId: UnitId): StandardRoute = {
+    val body = ResponseTemplate(StatusCodes.NotFound.intValue, s"Could not find station with id ${unitId.id.toString}")
+    complete(StatusCodes.NotFound -> body)
+  }
 
   // same as akka http default
   def internalServerError(): StandardRoute =
@@ -41,6 +52,7 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
   private implicit val singleIdResponseTemplateFormat: RootJsonFormat[SingleIdResponseTemplate] = jsonFormat3(SingleIdResponseTemplate)
   private implicit val unitInfoDTOFormat: RootJsonFormat[UnitInfoDTO] = jsonFormat4(UnitInfoDTO(_, _, _, _))
   private implicit val multipleInfoResponseTemplateFormat: RootJsonFormat[MultipleUnitInfoResponseTemplate] = jsonFormat3(MultipleUnitInfoResponseTemplate)
+  private implicit val singleInfoResponseTemplateFormat: RootJsonFormat[SingleUnitInfoResponseTemplate] = jsonFormat3(SingleUnitInfoResponseTemplate)
 
 
   private case class ResponseTemplate(statusCode: Int, message: String)
@@ -50,5 +62,7 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
   private case class SingleIdResponseTemplate(statusCode: Int, message: String, id: String)
 
   private case class MultipleUnitInfoResponseTemplate(statusCode: Int, message: String, result: List[UnitInfoDTO])
+
+  private case class SingleUnitInfoResponseTemplate(statusCode: Int, message: String, result: UnitInfoDTO)
 
 }
