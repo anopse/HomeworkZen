@@ -22,7 +22,7 @@ object Post extends RestRoute with DefaultJsonProtocol with SprayJsonSupport {
         entity(as[Request]) { request =>
           asAuthentified { userEntry: UserEntry =>
             request.toCommand(userEntry.id) match {
-              case None => ResponseBuilder.failure(StatusCodes.BadRequest, "unitType parameter is incorrect")
+              case None => ResponseBuilder.failure(StatusCodes.BadRequest, "stationType parameter is incorrect")
               case Some(command) => val result = (context.userManager ? command) (Config.Api.askTimeout).mapTo[CreateUnitResult]
                 onSuccess(result) {
                   case CreateUnitResult(_, Right(unitId)) =>
@@ -43,9 +43,9 @@ object Post extends RestRoute with DefaultJsonProtocol with SprayJsonSupport {
 
   override def thisType: Type = TypeHelper.getType(this)
 
-  private case class Request(maximumCapacity: Long, unitType: String) {
+  private case class Request(maximumCapacity: Long, stationType: String) {
     def toCommand(userId: UserId): Option[CreateUnitCommand] =
-      UnitType.fromId(unitType)
+      UnitType.fromId(stationType)
         .map(CreateUnitCommand(userId, maximumCapacity, _))
   }
 

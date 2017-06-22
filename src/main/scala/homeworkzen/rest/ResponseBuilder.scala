@@ -32,6 +32,11 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
     complete(statusCode -> body)
   }
 
+  def successNewAmount(value: Long): StandardRoute = {
+    val body = NewAmountResponseTemplate(StatusCodes.OK.intValue, "success", value)
+    complete(StatusCodes.OK -> body)
+  }
+
   def success(statusCode: StatusCode): StandardRoute =
     complete(statusCode -> ResponseTemplate(statusCode.intValue, "success"))
 
@@ -53,6 +58,7 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
   private implicit val unitInfoDTOFormat: RootJsonFormat[UnitInfoDTO] = jsonFormat4(UnitInfoDTO(_, _, _, _))
   private implicit val multipleInfoResponseTemplateFormat: RootJsonFormat[MultipleUnitInfoResponseTemplate] = jsonFormat3(MultipleUnitInfoResponseTemplate)
   private implicit val singleInfoResponseTemplateFormat: RootJsonFormat[SingleUnitInfoResponseTemplate] = jsonFormat3(SingleUnitInfoResponseTemplate)
+  private implicit val newAmountResponseTemplateFormat: RootJsonFormat[NewAmountResponseTemplate] = jsonFormat3(NewAmountResponseTemplate)
 
 
   private case class ResponseTemplate(statusCode: Int, message: String)
@@ -64,5 +70,7 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
   private case class MultipleUnitInfoResponseTemplate(statusCode: Int, message: String, result: List[UnitInfoDTO])
 
   private case class SingleUnitInfoResponseTemplate(statusCode: Int, message: String, result: UnitInfoDTO)
+
+  private case class NewAmountResponseTemplate(statusCode: Int, message: String, newAmount: Long)
 
 }

@@ -23,7 +23,9 @@ object Routes {
     List(rest.routes.users.Post,
       rest.routes.stations.Get,
       rest.routes.stations.Post,
-      rest.routes.stations.id.Get
+      rest.routes.stations.id.Get,
+      rest.routes.stations.id.deposit.Post,
+      rest.routes.stations.id.withdraw.Post
     )
 
 }

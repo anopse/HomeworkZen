@@ -3,7 +3,7 @@ package homeworkzen.rest.dto
 import homeworkzen.model.UnitInfo
 
 case class UnitInfoDTO(id: String,
-                       unitType: String,
+                       stationType: String,
                        maximumCapacity: Long,
                        currentAmount: Long)
 
