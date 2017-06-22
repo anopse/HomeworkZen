@@ -2,7 +2,7 @@ package homeworkzen.rest
 
 import akka.http.scaladsl._
 import akka.http.scaladsl.server.Directives._
-import homeworkzen.Config
+import homeworkzen.{Config, rest}
 
 import scala.concurrent.Future
 
@@ -20,10 +20,9 @@ object Routes {
   }
 
   def routes: Seq[RestRoute] =
-    List(homeworkzen.rest.routes.users.Post,
-      homeworkzen.rest.routes.test.Get,
-      homeworkzen.rest.routes.stations.Get,
-      homeworkzen.rest.routes.stations.Post
+    List(rest.routes.users.Post,
+      rest.routes.stations.Get,
+      rest.routes.stations.Post
     )
 
 }
