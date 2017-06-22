@@ -1,23 +1,25 @@
 package homeworkzen.rest
 
-import akka.actor._
 import akka.http.scaladsl._
 import akka.http.scaladsl.server.Directives._
-import akka.stream.ActorMaterializer
 import homeworkzen.Config
 
 import scala.concurrent.Future
 
 object Routes {
-
-  def bindRoutes(userManager: ActorRef)(implicit system: ActorSystem, materializer: ActorMaterializer): Future[Http.ServerBinding] = {
-    val context = RestContext(userManager, system)
-    val handler = routes.map(_.route(context)).reduce(_ ~ _)
+  def bindRoutes(implicit context: RestContext): Future[Http.ServerBinding] = {
+    implicit val system = context.system
+    implicit val materializer = context.materializer
+    val swagger = (new SwaggerDocService).routes
+    val swaggerUI = path("swagger") {
+      getFromResource("swagger/index.html")
+    } ~ getFromResourceDirectory("swagger")
+    val rest = routes.map(_.route).reduce(_ ~ _)
+    val handler = rest ~ swagger ~ swaggerUI
     Http().bindAndHandle(handler, Config.Api.interface, Config.Api.port)
   }
 
-
-  private def routes: List[RestRoute] =
+  def routes: Seq[RestRoute] =
     List(homeworkzen.rest.routes.users.Post,
       homeworkzen.rest.routes.test.Get)
 

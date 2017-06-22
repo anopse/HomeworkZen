@@ -3,6 +3,7 @@ package homeworkzen
 import akka.actor.{ActorSystem, Props}
 import akka.stream.ActorMaterializer
 import homeworkzen.domain.actor.UserManager
+import homeworkzen.rest.RestContext
 
 import scala.io.StdIn
 
@@ -12,7 +13,8 @@ object Main extends App {
   private implicit val materializer = ActorMaterializer()
   private implicit val executionContext = actorSystem.dispatcher
   private val userManager = actorSystem.actorOf(Props(new UserManager), "UserManager")
-  private val httpBinding = homeworkzen.rest.Routes.bindRoutes(userManager)(actorSystem, materializer)
+  private implicit val restContext = RestContext(userManager, actorSystem, materializer)
+  private val httpBinding = homeworkzen.rest.Routes.bindRoutes
   println(s"Server online at http://${Config.Api.interface}:${Config.Api.port}/")
   println("Server initialization done.")
   println("Press RETURN to stop server...")
