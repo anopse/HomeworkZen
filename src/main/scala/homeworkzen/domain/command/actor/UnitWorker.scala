@@ -1,10 +1,10 @@
-package homeworkzen.domain.actor
+package homeworkzen.domain.command.actor
 
 import akka.persistence.PersistentActor
-import homeworkzen.domain.message._
+import homeworkzen.domain.command.message._
 import homeworkzen.model._
 
-sealed class UnitWorker(unitId: UnitId, maximumCapacity: Long, unitType: UnitType) extends PersistentActor {
+sealed class UnitWorker(userId: UserId, unitId: UnitId, maximumCapacity: Long, unitType: UnitType) extends PersistentActor {
   private var currentAmount: Long = 0
 
   override def receiveRecover: Receive = {
@@ -28,7 +28,7 @@ sealed class UnitWorker(unitId: UnitId, maximumCapacity: Long, unitType: UnitTyp
       sender ! DepositResult(deposit, Left(DepositExceedCapacity))
     } else {
       val originalSender = sender
-      persist(DepositEvent(unitId, deposit.amountToDeposit)) { event =>
+      persist(DepositEvent(userId, unitId, deposit.amountToDeposit)) { event =>
         apply(event)
         originalSender ! DepositResult(deposit, Right(currentAmount))
       }
@@ -42,7 +42,7 @@ sealed class UnitWorker(unitId: UnitId, maximumCapacity: Long, unitType: UnitTyp
       sender ! WithdrawResult(withdraw, Left(WithdrawExceedAvailableAmount))
     } else {
       val originalSender = sender
-      persist(WithdrawEvent(unitId, withdraw.amountToWithdraw)) { event =>
+      persist(WithdrawEvent(userId, unitId, withdraw.amountToWithdraw)) { event =>
         apply(event)
         originalSender ! WithdrawResult(withdraw, Right(currentAmount))
       }

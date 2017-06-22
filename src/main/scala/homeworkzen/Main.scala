@@ -2,7 +2,7 @@ package homeworkzen
 
 import akka.actor.{ActorSystem, Props}
 import akka.stream.ActorMaterializer
-import homeworkzen.domain.actor.UserManager
+import homeworkzen.domain.command.actor.UserManager
 import homeworkzen.rest.RestContext
 
 import scala.io.StdIn

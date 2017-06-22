@@ -1,23 +1,14 @@
 package homeworkzen.model
 
-sealed trait UnitType {
-  def id: String
-}
+sealed case class UnitType(id: String)
 
 object UnitType {
-  val knownTypes: List[UnitType] = List(EolianType, SolarType, ThermalType)
+  val Eolian = UnitType("eolian")
+  val Solar = UnitType("solar")
+  val Thermal = UnitType("thermal")
+
+  val knownTypes: List[UnitType] = List(Eolian, Solar, Thermal)
 
   def fromId(id: String): Option[UnitType] = knownTypes.find(_.id == id)
 }
 
-object EolianType extends UnitType {
-  def id = "eolian"
-}
-
-object SolarType extends UnitType {
-  def id = "solar"
-}
-
-object ThermalType extends UnitType {
-  def id = "thermal"
-}

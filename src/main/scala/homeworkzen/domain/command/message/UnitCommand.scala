@@ -1,4 +1,4 @@
-package homeworkzen.domain.message
+package homeworkzen.domain.command.message
 
 import homeworkzen.model.UnitId
 

@@ -1,10 +1,10 @@
-package homeworkzen.domain.actor
+package homeworkzen.domain.command.actor
 
 import java.util.UUID
 
 import akka.actor.Props
 import akka.persistence.PersistentActor
-import homeworkzen.domain.message._
+import homeworkzen.domain.command.message._
 import homeworkzen.model._
 
 sealed class UserWorker(userId: UserId) extends PersistentActor {
@@ -13,8 +13,8 @@ sealed class UserWorker(userId: UserId) extends PersistentActor {
   }
 
   private def apply(unitCreated: UnitCreatedEvent): Unit = {
-    val props = Props(new UnitWorker(unitCreated.unitId, unitCreated.maximumCapacity, unitCreated.unitType))
-    context.actorOf(props, unitCreated.userId.id.toString)
+    val props = Props(new UnitWorker(userId, unitCreated.unitId, unitCreated.maximumCapacity, unitCreated.unitType))
+    context.actorOf(props, unitCreated.unitId.id.toString)
   }
 
   override def receiveCommand: Receive = {

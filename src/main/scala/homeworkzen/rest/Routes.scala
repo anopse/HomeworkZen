@@ -21,6 +21,9 @@ object Routes {
 
   def routes: Seq[RestRoute] =
     List(homeworkzen.rest.routes.users.Post,
-      homeworkzen.rest.routes.test.Get)
+      homeworkzen.rest.routes.test.Get,
+      homeworkzen.rest.routes.stations.Get,
+      homeworkzen.rest.routes.stations.Post
+    )
 
 }

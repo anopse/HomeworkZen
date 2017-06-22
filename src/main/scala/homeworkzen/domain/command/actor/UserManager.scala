@@ -1,10 +1,10 @@
-package homeworkzen.domain.actor
+package homeworkzen.domain.command.actor
 
 import java.util.UUID
 
 import akka.actor.Props
 import akka.persistence.PersistentActor
-import homeworkzen.domain.message._
+import homeworkzen.domain.command.message._
 import homeworkzen.model._
 
 import scala.collection.mutable
