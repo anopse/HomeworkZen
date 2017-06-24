@@ -1,5 +1,6 @@
 package homeworkzen.rest
 
+import java.time.Instant
 import java.util.UUID
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
@@ -7,8 +8,8 @@ import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 import akka.http.scaladsl.server.Directives.complete
 import akka.http.scaladsl.server.StandardRoute
 import homeworkzen.model.{UnitId, UnitInfo}
-import homeworkzen.rest.dto.UnitInfoDTO
-import spray.json.{DefaultJsonProtocol, RootJsonFormat}
+import homeworkzen.rest.dto.{TimeStampedValueDTO, UnitInfoDTO}
+import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, RootJsonFormat}
 
 object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
 
@@ -25,7 +26,6 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
     val body = MultipleUnitInfoResponseTemplate(statusCode.intValue, "success", dto)
     complete(statusCode -> body)
   }
-
   def successUnitInfo(statusCode: StatusCode, value: UnitInfo): StandardRoute = {
     val dto = UnitInfoDTO.fromUnitInfo(value)
     val body = SingleUnitInfoResponseTemplate(statusCode.intValue, "success", dto)
@@ -35,6 +35,11 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
   def successNewAmount(value: Long): StandardRoute = {
     val body = NewAmountResponseTemplate(StatusCodes.OK.intValue, "success", value)
     complete(StatusCodes.OK -> body)
+  }
+
+  def successHistory(statusCode: StatusCode, values: List[TimeStampedValueDTO]): StandardRoute = {
+    val body = HistoryResponseTemplate(statusCode.intValue, "success", values)
+    complete(statusCode -> body)
   }
 
   def success(statusCode: StatusCode): StandardRoute =
@@ -52,14 +57,24 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
   def internalServerError(): StandardRoute =
     complete(StatusCodes.InternalServerError -> "There was an internal server error.")
 
+
+  private implicit val instantFormat = new RootJsonFormat[Instant] {
+    override def write(obj: Instant) = JsString(obj.toString)
+
+    override def read(json: JsValue): Instant = json match {
+      case JsString(str) => Instant.parse(str)
+      case _ => throw DeserializationException("Can't deerialize instant")
+    }
+  }
   private implicit val responseTemplateFormat: RootJsonFormat[ResponseTemplate] = jsonFormat2(ResponseTemplate)
   private implicit val idValuesResponseTemplateFormat: RootJsonFormat[IdValuesResponseTemplate] = jsonFormat3(IdValuesResponseTemplate)
   private implicit val singleIdResponseTemplateFormat: RootJsonFormat[SingleIdResponseTemplate] = jsonFormat3(SingleIdResponseTemplate)
   private implicit val unitInfoDTOFormat: RootJsonFormat[UnitInfoDTO] = jsonFormat4(UnitInfoDTO(_, _, _, _))
+  private implicit val timeStampedValueDTOFormat: RootJsonFormat[TimeStampedValueDTO] = jsonFormat2(TimeStampedValueDTO(_, _))
   private implicit val multipleInfoResponseTemplateFormat: RootJsonFormat[MultipleUnitInfoResponseTemplate] = jsonFormat3(MultipleUnitInfoResponseTemplate)
   private implicit val singleInfoResponseTemplateFormat: RootJsonFormat[SingleUnitInfoResponseTemplate] = jsonFormat3(SingleUnitInfoResponseTemplate)
   private implicit val newAmountResponseTemplateFormat: RootJsonFormat[NewAmountResponseTemplate] = jsonFormat3(NewAmountResponseTemplate)
-
+  private implicit val historyResponseTemplateFormat: RootJsonFormat[HistoryResponseTemplate] = jsonFormat3(HistoryResponseTemplate)
 
   private case class ResponseTemplate(statusCode: Int, message: String)
 
@@ -72,5 +87,7 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
   private case class SingleUnitInfoResponseTemplate(statusCode: Int, message: String, result: UnitInfoDTO)
 
   private case class NewAmountResponseTemplate(statusCode: Int, message: String, newAmount: Long)
+
+  private case class HistoryResponseTemplate(statusCode: Int, message: String, result: List[TimeStampedValueDTO])
 
 }
