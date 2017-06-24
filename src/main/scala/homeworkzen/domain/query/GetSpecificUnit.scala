@@ -10,11 +10,10 @@ import homeworkzen.model._
 
 import scala.concurrent.Future
 
+object GetSpecificUnit {
 
-object GetAllUnits {
-
-  def apply(user: UserId)(implicit actorSystem: ActorSystem,
-                          actorMaterializer: ActorMaterializer): Future[Seq[UnitInfo]] = {
+  def apply(user: UserId, unitId: UnitId)(implicit actorSystem: ActorSystem,
+                                          actorMaterializer: ActorMaterializer): Future[Option[UnitInfo]] = {
     val source = QueryHelper.currentEventsByTag(s"${user.id}")
     source.map(_.event)
       .collect {
@@ -24,6 +23,7 @@ object GetAllUnits {
       }
       .runFold(Map.empty: Map[UUID, UnitInfo])((map, event) =>
         event match {
+          case event: UnitEvent if event.unitId != unitId => map // ignore event of other units
           case created: UnitCreatedEvent => map +
             (created.unitId.id -> UnitInfo(created.unitId, created.unitType, created.maximumCapacity, 0))
           case withdraw: WithdrawEvent => map +
@@ -36,10 +36,10 @@ object GetAllUnits {
               val value = map(deposit.unitId.id)
               value.copy(currentAmount = value.currentAmount + deposit.amountDeposited)
             })
-        }).map(_.values.toSeq)(actorSystem.dispatcher)
+        })
+      .map(infosMap => infosMap.values.toList match {
+        case value :: Nil => Some(value)
+        case _ => None
+      })(actorSystem.dispatcher)
   }
-
 }
-
-
-
