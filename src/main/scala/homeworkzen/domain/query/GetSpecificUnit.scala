@@ -12,9 +12,9 @@ import scala.concurrent.Future
 
 object GetSpecificUnit {
 
-  def apply(user: UserId, unitId: UnitId)(implicit actorSystem: ActorSystem,
-                                          actorMaterializer: ActorMaterializer): Future[Option[UnitInfo]] = {
-    val source = QueryHelper.currentEventsByTag(s"${user.id}")
+  def apply(unitId: UnitId)(implicit actorSystem: ActorSystem,
+                            actorMaterializer: ActorMaterializer): Future[Option[UnitInfo]] = {
+    val source = QueryHelper.currentEventsByTag(s"${unitId.id}")
     source.map(_.event)
       .collect {
         case created: UnitCreatedEvent => created
@@ -23,7 +23,6 @@ object GetSpecificUnit {
       }
       .runFold(Map.empty: Map[UUID, UnitInfo])((map, event) =>
         event match {
-          case event: UnitEvent if event.unitId != unitId => map // ignore event of other units
           case created: UnitCreatedEvent => map +
             (created.unitId.id -> UnitInfo(created.unitId, created.unitType, created.maximumCapacity, 0))
           case withdraw: WithdrawEvent => map +
