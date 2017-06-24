@@ -1,5 +1,7 @@
 package homeworkzen.domain.command.message
 
+import java.time.Instant
+
 import homeworkzen.model._
 
 sealed trait CreateUnitError
@@ -14,4 +16,4 @@ case class CreateUnitCommand(userId: UserId, maximumCapacity: Long, unitType: Un
 
 case class CreateUnitResult(request: CreateUnitCommand, result: Either[CreateUnitError, UnitId])
 
-case class UnitCreatedEvent(userId: UserId, unitId: UnitId, maximumCapacity: Long, unitType: UnitType) extends UnitEvent
+case class UnitCreatedEvent(timestamp: Instant, userId: UserId, unitId: UnitId, maximumCapacity: Long, unitType: UnitType) extends UnitEvent

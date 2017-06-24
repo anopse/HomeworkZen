@@ -1,5 +1,7 @@
 package homeworkzen.domain.command.message
 
+import java.time.Instant
+
 import homeworkzen.model._
 
 sealed trait WithdrawError
@@ -20,4 +22,4 @@ case class WithdrawCommand(userId: UserId, unitId: UnitId, amountToWithdraw: Lon
 // todo : document somehow that Long result is the new amount available
 case class WithdrawResult(request: WithdrawCommand, result: Either[WithdrawError, Long])
 
-case class WithdrawEvent(userId: UserId, unitId: UnitId, amountWithdrawn: Long) extends UnitEvent
+case class WithdrawEvent(timestamp: Instant, userId: UserId, unitId: UnitId, amountWithdrawn: Long) extends UnitEvent

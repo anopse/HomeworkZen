@@ -1,5 +1,6 @@
 package homeworkzen.domain.command.actor
 
+import java.time.Instant
 import java.util.UUID
 
 import akka.actor.Props
@@ -34,7 +35,7 @@ sealed class UserManager extends PersistentActor {
     } else {
       val userId = UserId(UUID.randomUUID())
       val originalSender = sender
-      persist(UserCreatedEvent(UserEntry(userId, createUser.username, createUser.hashedPassword))) { event =>
+      persist(UserCreatedEvent(Instant.now(), UserEntry(userId, createUser.username, createUser.hashedPassword))) { event =>
         apply(event)
         originalSender ! CreateUserResult(createUser, Right(userId))
       }

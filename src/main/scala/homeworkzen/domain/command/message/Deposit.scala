@@ -1,5 +1,7 @@
 package homeworkzen.domain.command.message
 
+import java.time.Instant
+
 import homeworkzen.model._
 
 sealed trait DepositError
@@ -20,4 +22,4 @@ case class DepositCommand(userId: UserId, unitId: UnitId, amountToDeposit: Long)
 // todo : document somehow that Long result is the new amount available
 case class DepositResult(request: DepositCommand, result: Either[DepositError, Long])
 
-case class DepositEvent(userId: UserId, unitId: UnitId, amountDeposited: Long) extends UnitEvent
+case class DepositEvent(timestamp: Instant, userId: UserId, unitId: UnitId, amountDeposited: Long) extends UnitEvent

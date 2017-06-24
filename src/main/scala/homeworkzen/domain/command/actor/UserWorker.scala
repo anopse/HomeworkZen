@@ -1,5 +1,6 @@
 package homeworkzen.domain.command.actor
 
+import java.time.Instant
 import java.util.UUID
 
 import akka.actor.Props
@@ -28,7 +29,7 @@ sealed class UserWorker(userId: UserId) extends PersistentActor {
     } else {
       val unitId = UnitId(UUID.randomUUID())
       val originalSender = sender
-      persist(UnitCreatedEvent(userId, unitId, createUnit.maximumCapacity, createUnit.unitType)) { event =>
+      persist(UnitCreatedEvent(Instant.now(), userId, unitId, createUnit.maximumCapacity, createUnit.unitType)) { event =>
         apply(event)
         originalSender ! CreateUnitResult(createUnit, Right(unitId))
       }
