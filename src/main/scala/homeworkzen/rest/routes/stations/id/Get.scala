@@ -16,9 +16,9 @@ object Get extends RestRoute {
   override def route(implicit context: RestContext): Route =
     path("stations" / JavaUUID) { stationId =>
       get {
-        asAuthentified { _: UserEntry =>
+        asAuthentified { entry: UserEntry =>
           val unitId = UnitId(stationId)
-          val query = GetSpecificUnit(unitId)(context.system, context.materializer)
+          val query = GetSpecificUnit(entry.id, unitId)(context.system, context.materializer)
           onComplete(query) {
             case Success(Some(info)) => ResponseBuilder.successUnitInfo(StatusCodes.OK, info)
             case Success(None) => ResponseBuilder.notFound(unitId)
