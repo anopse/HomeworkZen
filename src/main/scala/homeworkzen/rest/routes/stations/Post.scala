@@ -23,7 +23,7 @@ object Post extends RestRoute with DefaultJsonProtocol with SprayJsonSupport {
           asAuthentified { userEntry: UserEntry =>
             request.toCommand(userEntry.id) match {
               case None => ResponseBuilder.failure(StatusCodes.BadRequest, "stationType parameter is incorrect")
-              case Some(command) => val result = (context.userManager ? command) (Config.Api.askTimeout).mapTo[CreateUnitResult]
+              case Some(command) => val result = (context.userCluster ? command) (Config.Api.askTimeout).mapTo[CreateUnitResult]
                 onSuccess(result) {
                   case CreateUnitResult(_, Right(unitId)) =>
                     ResponseBuilder.successId(StatusCodes.Created, unitId.id)

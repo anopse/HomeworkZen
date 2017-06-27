@@ -8,13 +8,13 @@ import akka.persistence.PersistentActor
 import homeworkzen.domain.command.message._
 import homeworkzen.model._
 
-sealed class UserWorker(userId: UserId) extends PersistentActor {
+sealed class UserWorker extends PersistentActor {
   override def receiveRecover: Receive = {
     case unitCreated: UnitCreatedEvent => apply(unitCreated)
   }
 
   private def apply(unitCreated: UnitCreatedEvent): Unit = {
-    val props = Props(new UnitWorker(userId, unitCreated.unitId, unitCreated.maximumCapacity, unitCreated.unitType))
+    val props = Props(new UnitWorker(unitCreated.userId, unitCreated.unitId, unitCreated.maximumCapacity, unitCreated.unitType))
     context.actorOf(props, unitCreated.unitId.id.toString)
   }
 
@@ -29,7 +29,7 @@ sealed class UserWorker(userId: UserId) extends PersistentActor {
     } else {
       val unitId = UnitId(UUID.randomUUID())
       val originalSender = sender
-      persist(UnitCreatedEvent(Instant.now(), userId, unitId, createUnit.maximumCapacity, createUnit.unitType)) { event =>
+      persist(UnitCreatedEvent(Instant.now(), createUnit.userId, unitId, createUnit.maximumCapacity, createUnit.unitType)) { event =>
         apply(event)
         originalSender ! CreateUnitResult(createUnit, Right(unitId))
       }
@@ -43,5 +43,5 @@ sealed class UserWorker(userId: UserId) extends PersistentActor {
     }
   }
 
-  override def persistenceId: String = s"userworker-${userId.id}"
+  override def persistenceId: String =  self.path.parent.name + "-" + self.path.name
 }

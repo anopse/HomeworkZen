@@ -15,5 +15,9 @@ object Config {
     lazy val hashSalt: String = ConfigFactory.load().getString("homeworkzen.api.hashSalt")
   }
 
+  object Cluster {
+    lazy val shardCount: Int = ConfigFactory.load().getInt("homeworkzen.cluster.shardCount")
+  }
+
 
 }

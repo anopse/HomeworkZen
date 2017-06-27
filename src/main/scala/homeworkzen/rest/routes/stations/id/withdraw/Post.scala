@@ -23,7 +23,7 @@ object Post extends RestRoute with DefaultJsonProtocol with SprayJsonSupport {
           asAuthentified { userEntry: UserEntry =>
             val unitId = UnitId(stationId)
             val command = request.toCommand(userEntry.id, unitId)
-            val result = (context.userManager ? command) (Config.Api.askTimeout).mapTo[WithdrawResult]
+            val result = (context.userCluster ? command) (Config.Api.askTimeout).mapTo[WithdrawResult]
             onSuccess(result) {
               case WithdrawResult(_, Right(newAmount)) =>
                 ResponseBuilder.successNewAmount(newAmount)

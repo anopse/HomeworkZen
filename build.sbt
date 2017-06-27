@@ -15,6 +15,8 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.+"
 libraryDependencies += "com.github.romix.akka" %% "akka-kryo-serialization" % "0.5.1"
 libraryDependencies += "mysql" % "mysql-connector-java" % "6.0.6"
 libraryDependencies += "com.typesafe.akka" %% "akka-cluster" % "2.5.3"
+libraryDependencies += "com.typesafe.akka" %% "akka-cluster-sharding" % "2.5.3"
+libraryDependencies += "com.typesafe.akka" %% "akka-cluster-tools" % "2.5.3"
 
 addCompilerPlugin("com.github.ghik" %% "silencer-plugin" % "0.5")
 libraryDependencies += "com.github.ghik" %% "silencer-lib" % "0.5"

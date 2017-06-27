@@ -18,15 +18,12 @@ sealed class UserManager extends PersistentActor {
   }
 
   private def apply(userCreated: UserCreatedEvent): Unit = {
-    val props = Props(new UserWorker(userCreated.userEntry.id))
-    context.actorOf(props, userCreated.userEntry.id.id.toString)
     usernameToEntry += userCreated.userEntry.username -> userCreated.userEntry
   }
 
   override def receiveCommand: Receive = {
     case createUser: CreateUserCommand => handle(createUser)
     case getUserEntry: GetUserEntryRequest => handle(getUserEntry)
-    case userCommand: UserCommand => forward(userCommand)
   }
 
   private def handle(createUser: CreateUserCommand): Unit = {
@@ -39,13 +36,6 @@ sealed class UserManager extends PersistentActor {
         apply(event)
         originalSender ! CreateUserResult(createUser, Right(userId))
       }
-    }
-  }
-
-  private def forward(userCommand: UserCommand): Unit = {
-    context.child(userCommand.userId.id.toString) match {
-      case Some(child) => child forward userCommand
-      case None => sender ! userCommand.userForwardFailureMessage
     }
   }
 

@@ -82,5 +82,18 @@
     <orderEntry type="library" name="SBT: org.scala-lang.modules:scala-parser-combinators_2.12:1.0.4:jar" level="project" />
     <orderEntry type="library" name="SBT: org.slf4j:slf4j-api:1.7.25:jar" level="project" />
     <orderEntry type="library" name="SBT: org.yaml:snakeyaml:1.17:jar" level="project" />
+    <orderEntry type="library" name="SBT: com.github.jnr:jffi:1.2.14:jar" level="project" />
+    <orderEntry type="library" name="SBT: com.github.jnr:jffi:1.2.14:native:jar" level="project" />
+    <orderEntry type="library" name="SBT: com.github.jnr:jnr-constants:0.9.6:jar" level="project" />
+    <orderEntry type="library" name="SBT: com.github.jnr:jnr-ffi:2.1.2:jar" level="project" />
+    <orderEntry type="library" name="SBT: com.github.jnr:jnr-x86asm:1.0.2:jar" level="project" />
+    <orderEntry type="library" name="SBT: com.typesafe.akka:akka-cluster-sharding_2.12:2.5.3:jar" level="project" />
+    <orderEntry type="library" name="SBT: com.typesafe.akka:akka-cluster-tools_2.12:2.5.3:jar" level="project" />
+    <orderEntry type="library" name="SBT: com.typesafe.akka:akka-distributed-data_2.12:2.5.3:jar" level="project" />
+    <orderEntry type="library" name="SBT: org.lmdbjava:lmdbjava:0.0.5:jar" level="project" />
+    <orderEntry type="library" name="SBT: org.ow2.asm:asm-analysis:5.0.3:jar" level="project" />
+    <orderEntry type="library" name="SBT: org.ow2.asm:asm-commons:5.0.3:jar" level="project" />
+    <orderEntry type="library" name="SBT: org.ow2.asm:asm-tree:5.0.3:jar" level="project" />
+    <orderEntry type="library" name="SBT: org.ow2.asm:asm-util:5.0.3:jar" level="project" />
   </component>
 </module>
