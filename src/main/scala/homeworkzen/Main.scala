@@ -1,11 +1,10 @@
 package homeworkzen
 
 import akka.Done
-import akka.actor.{ActorSystem, CoordinatedShutdown, Props}
+import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.cluster.Cluster
 import akka.stream.ActorMaterializer
 import homeworkzen.rest.RestContext
-import homeworkzen.util.ClusterLogger
 import homeworkzen.clustering.{UserManagerSingleton, UserWorkerSharding}
 
 import scala.io.StdIn
@@ -18,7 +17,7 @@ object Main extends App {
     implicit val executionContext = actorSystem.dispatcher
     val userManager = UserManagerSingleton.register
     val userCluster = UserWorkerSharding.register
-    val clusterLogger = actorSystem.actorOf(Props(new ClusterLogger), "ClusterLogger")
+    //val clusterLogger = actorSystem.actorOf(Props(new ClusterLogger), "ClusterLogger")
     implicit val restContext = RestContext(userManager, userCluster, actorSystem, materializer)
     val httpBinding = homeworkzen.rest.Routes.bindRoutes
 

@@ -23,7 +23,6 @@ sealed class UserManager extends PersistentActor {
 
   override def receiveCommand: Receive = {
     case createUser: CreateUserCommand => handle(createUser)
-    case getUserEntry: GetUserEntryRequest => handle(getUserEntry)
   }
 
   private def handle(createUser: CreateUserCommand): Unit = {
@@ -36,13 +35,6 @@ sealed class UserManager extends PersistentActor {
         apply(event)
         originalSender ! CreateUserResult(createUser, Right(userId))
       }
-    }
-  }
-
-  private def handle(getUserEntry: GetUserEntryRequest): Unit = {
-    usernameToEntry.get(getUserEntry.username) match {
-      case Some(userEntry) => sender ! GetUserEntryResult(getUserEntry, Right(userEntry))
-      case None => sender ! GetUserEntryResult(getUserEntry, Left(UsernameNotFound))
     }
   }
 

@@ -5,9 +5,8 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.Credentials.Provided
 import akka.http.scaladsl.server.directives.SecurityDirectives._
 import akka.http.scaladsl.server.directives._
-import akka.pattern.ask
 import homeworkzen.Config
-import homeworkzen.domain.command.message._
+import homeworkzen.domain.query.GetUserEntry
 import homeworkzen.model.UserEntry
 import homeworkzen.util.Hasher
 
@@ -21,16 +20,8 @@ object Authentifier {
   private def userPassAuthenticator(context: RestContext)(credentials: Credentials): Future[Option[UserEntry]] =
     credentials match {
       case p@Provided(username) =>
-        val result = (context.userManager ? GetUserEntryRequest(username)) (Config.Api.askTimeout).mapTo[GetUserEntryResult]
-        import context.system.dispatcher
-        result.map {
-          case GetUserEntryResult(_, Left(_)) => None
-          case GetUserEntryResult(_, Right(entry)) =>
-            if (p.verify(entry.secret, Hasher(_)))
-              Some(entry)
-            else
-              None
-        }
+        val result = GetUserEntry(username)(context.system, context.materializer)
+        result.map(_.filter(entry => p.verify(entry.secret, Hasher.apply)))(context.system.dispatcher)
       case _ => Future.successful(None)
     }
 
