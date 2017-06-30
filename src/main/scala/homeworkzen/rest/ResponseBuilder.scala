@@ -7,8 +7,8 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 import akka.http.scaladsl.server.Directives.complete
 import akka.http.scaladsl.server.StandardRoute
-import homeworkzen.model.{UnitId, UnitInfo, UnitStats}
-import homeworkzen.rest.dto.{TimeStampedValueDTO, UnitInfoDTO, UnitStatsDTO}
+import homeworkzen.model._
+import homeworkzen.rest.dto._
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, RootJsonFormat}
 
 object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
@@ -35,7 +35,13 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
 
   def successUnitStats(statusCode: StatusCode, value: UnitStats): StandardRoute = {
     val dto = UnitStatsDTO.fromUnitStats(value)
-    val body = SingleUnitStatsResponseTemplate(statusCode.intValue, "success", dto)
+    val body = UnitStatsResponseTemplate(statusCode.intValue, "success", dto)
+    complete(statusCode -> body)
+  }
+
+  def successUserStats(statusCode: StatusCode, value: UserStats): StandardRoute = {
+    val dto = UserStatsDTO.fromUserStats(value)
+    val body = UserStatsResponseTemplate(statusCode.intValue, "success", dto)
     complete(statusCode -> body)
   }
 
@@ -79,11 +85,14 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
   private implicit val unitInfoDTOFormat: RootJsonFormat[UnitInfoDTO] = jsonFormat4(UnitInfoDTO.apply)
   private implicit val timeStampedValueDTOFormat: RootJsonFormat[TimeStampedValueDTO] = jsonFormat2(TimeStampedValueDTO.apply)
   private implicit val unitStatsDTOFormat: RootJsonFormat[UnitStatsDTO] = jsonFormat4(UnitStatsDTO.apply)
+  private implicit val groupedStatsDTOFormat: RootJsonFormat[GroupedStatsDTO] = jsonFormat3(GroupedStatsDTO.apply)
+  private implicit val userStatsDTOFormat: RootJsonFormat[UserStatsDTO] = jsonFormat3(UserStatsDTO.apply)
   private implicit val multipleInfoResponseTemplateFormat: RootJsonFormat[MultipleUnitInfoResponseTemplate] = jsonFormat3(MultipleUnitInfoResponseTemplate)
   private implicit val singleInfoResponseTemplateFormat: RootJsonFormat[SingleUnitInfoResponseTemplate] = jsonFormat3(SingleUnitInfoResponseTemplate)
   private implicit val newAmountResponseTemplateFormat: RootJsonFormat[NewAmountResponseTemplate] = jsonFormat3(NewAmountResponseTemplate)
   private implicit val historyResponseTemplateFormat: RootJsonFormat[HistoryResponseTemplate] = jsonFormat3(HistoryResponseTemplate)
-  private implicit val singleUnitStatsResponseTemplateFormat: RootJsonFormat[SingleUnitStatsResponseTemplate] = jsonFormat3(SingleUnitStatsResponseTemplate)
+  private implicit val unitStatsResponseTemplateFormat: RootJsonFormat[UnitStatsResponseTemplate] = jsonFormat3(UnitStatsResponseTemplate)
+  private implicit val userStatsResponseTemplateFormat: RootJsonFormat[UserStatsResponseTemplate] = jsonFormat3(UserStatsResponseTemplate)
 
   private case class ResponseTemplate(statusCode: Int, message: String)
 
@@ -99,6 +108,8 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
 
   private case class HistoryResponseTemplate(statusCode: Int, message: String, result: List[TimeStampedValueDTO])
 
-  private case class SingleUnitStatsResponseTemplate(statusCode: Int, message: String, result: UnitStatsDTO)
+  private case class UnitStatsResponseTemplate(statusCode: Int, message: String, result: UnitStatsDTO)
+
+  private case class UserStatsResponseTemplate(statusCode: Int, message: String, result: UserStatsDTO)
 
 }
