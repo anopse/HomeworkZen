@@ -14,29 +14,27 @@ import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 import scala.reflect.runtime.universe.Type
 
 
-// todo : make swagger not use return value as model then enable it again
-//import io.swagger.annotations._
-//import javax.ws.rs.Path
+// todo : Make swagger not use implicit parameter and return value in documentation
+import io.swagger.annotations._
+import javax.ws.rs.Path
 
-//@Api(value = "/users", consumes = "application/json", produces = "application/json")
-//@Path("/users")
+@Api(value = "/users", consumes = "application/json", produces = "application/json")
+@Path("/users")
 object Post extends RestRoute with DefaultJsonProtocol with SprayJsonSupport {
 
-  //  @ApiOperation(value = "Create a new user account", nickname = "anonymousHello", httpMethod = "POST")
-  //  @ApiResponses(Array(
-  //    new ApiResponse(code = 201, message = "Successfully created an user."),
-  //    new ApiResponse(code = 409, message = "Creation failed, Username is already in used.")
-  //  ))
-  //  @ApiImplicitParams(Array(
-  //    new ApiImplicitParam(name = "body",
-  //      required = true,
-  //      example = "{username=\"toto\", password=\"secret\"}",
-  //      allowMultiple = false,
-  //      `type` = "string",
-  //      paramType = "body"
-  //    )))
-  //  def doc = Unit
-
+  @ApiOperation(value = "Create a new user account", nickname = "anonymousHello", httpMethod = "POST")
+  @ApiResponses(Array(
+    new ApiResponse(code = 201, message = "Successfully created an user."),
+    new ApiResponse(code = 409, message = "Creation failed, Username is already in used.")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "body",
+      required = true,
+      example = "{username=\"toto\", password=\"secret\"}",
+      allowMultiple = false,
+      `type` = "string",
+      paramType = "body"
+    )))
   override def route(implicit context: RestContext): Route =
     path("users") {
       post {
