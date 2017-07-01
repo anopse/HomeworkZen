@@ -70,16 +70,15 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
   def internalServerError(): StandardRoute =
     complete(StatusCodes.InternalServerError -> "There was an internal server error.")
 
-  import homeworkzen.rest.dto.utils.NativeTypeJSONFormats._
+  // import json format from models
+  import homeworkzen.rest.dto.model.TimeStampedValueDTO._
+  import homeworkzen.rest.dto.model.UnitInfoDTO._
+  import homeworkzen.rest.dto.model.UnitStatsDTO._
+  import homeworkzen.rest.dto.model.UserStatsDTO._
 
   private implicit val responseTemplateFormat: RootJsonFormat[ResponseTemplate] = jsonFormat2(ResponseTemplate)
   private implicit val idValuesResponseTemplateFormat: RootJsonFormat[IdValuesResponseTemplate] = jsonFormat3(IdValuesResponseTemplate)
   private implicit val singleIdResponseTemplateFormat: RootJsonFormat[SingleIdResponseTemplate] = jsonFormat3(SingleIdResponseTemplate)
-  private implicit val unitInfoDTOFormat: RootJsonFormat[UnitInfoDTO] = jsonFormat4(UnitInfoDTO.apply)
-  private implicit val timeStampedValueDTOFormat: RootJsonFormat[TimeStampedValueDTO] = jsonFormat2(TimeStampedValueDTO.apply)
-  private implicit val unitStatsDTOFormat: RootJsonFormat[UnitStatsDTO] = jsonFormat4(UnitStatsDTO.apply)
-  private implicit val groupedStatsDTOFormat: RootJsonFormat[GroupedStatsDTO] = jsonFormat3(GroupedStatsDTO.apply)
-  private implicit val userStatsDTOFormat: RootJsonFormat[UserStatsDTO] = jsonFormat3(UserStatsDTO.apply)
   private implicit val multipleInfoResponseTemplateFormat: RootJsonFormat[MultipleUnitInfoResponseTemplate] = jsonFormat3(MultipleUnitInfoResponseTemplate)
   private implicit val singleInfoResponseTemplateFormat: RootJsonFormat[SingleUnitInfoResponseTemplate] = jsonFormat3(SingleUnitInfoResponseTemplate)
   private implicit val newAmountResponseTemplateFormat: RootJsonFormat[NewAmountResponseTemplate] = jsonFormat3(NewAmountResponseTemplate)
