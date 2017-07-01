@@ -1,7 +1,7 @@
 package homeworkzen
 
 import akka.Done
-import akka.actor.{ActorSystem, CoordinatedShutdown}
+import akka.actor.{ActorSystem, Address, CoordinatedShutdown}
 import akka.cluster.Cluster
 import akka.stream.ActorMaterializer
 import homeworkzen.rest.RestContext
@@ -26,7 +26,14 @@ object Main extends App {
     )
 
     val cluster = Cluster(actorSystem)
-    cluster.join(cluster.selfAddress)
+    if (args.length == 3) {
+      // todo improve args handling
+      // for testing purpose only for now
+      val addr = Address(cluster.selfAddress.protocol, cluster.selfAddress.system, args(3), args(4).toInt)
+      cluster.join(addr)
+    }
+    else
+      cluster.join(cluster.selfAddress)
 
     println(s"Server online at http://${Config.Api.interface}:${Config.Api.port}/")
     println("Server initialization done.")
