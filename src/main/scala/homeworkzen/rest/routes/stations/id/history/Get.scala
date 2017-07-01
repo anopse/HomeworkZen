@@ -37,7 +37,7 @@ object Get extends RestRoute {
                         if (values.isEmpty)
                           ResponseBuilder.notFound(unitId)
                         else
-                          ResponseBuilder.successHistory(StatusCodes.OK, values)
+                          ResponseBuilder.success(StatusCodes.OK, values)
                       case Failure(_) => ResponseBuilder.internalServerError()
                     }
                   }

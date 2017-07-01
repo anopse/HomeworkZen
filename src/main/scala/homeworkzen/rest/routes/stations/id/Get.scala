@@ -20,7 +20,9 @@ object Get extends RestRoute {
           val unitId = UnitId(stationId)
           val query = GetSpecificUnit(entry.id, unitId)(context.system, context.materializer)
           onComplete(query) {
-            case Success(Some(info)) => ResponseBuilder.successUnitInfo(StatusCodes.OK, info)
+            case Success(Some(info)) =>
+              import homeworkzen.rest.dto.model.UnitInfoDTO._
+              ResponseBuilder.success(StatusCodes.OK, fromUnitInfo(info))
             case Success(None) => ResponseBuilder.notFound(unitId)
             case Failure(_) => ResponseBuilder.internalServerError()
           }

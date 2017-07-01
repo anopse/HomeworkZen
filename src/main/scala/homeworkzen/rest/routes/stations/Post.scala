@@ -26,7 +26,7 @@ object Post extends RestRoute with DefaultJsonProtocol with SprayJsonSupport {
               case Some(command) => val result = (context.userCluster ? command) (Config.Api.askTimeout).mapTo[CreateUnitResult]
                 onSuccess(result) {
                   case CreateUnitResult(_, Right(unitId)) =>
-                    ResponseBuilder.successId(StatusCodes.Created, unitId.id)
+                    ResponseBuilder.success(StatusCodes.Created, unitId.id.toString)
                   case CreateUnitResult(_, Left(InvalidMaximumCapacityValue)) =>
                     ResponseBuilder.failure(StatusCodes.BadRequest, "maximumCapacity parameter is incorrect")
                   case CreateUnitResult(_, Left(CreateUnitUserNotFound)) =>

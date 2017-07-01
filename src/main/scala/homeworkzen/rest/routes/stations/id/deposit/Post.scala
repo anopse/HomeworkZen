@@ -26,7 +26,7 @@ object Post extends RestRoute with DefaultJsonProtocol with SprayJsonSupport {
             val result = (context.userCluster ? command) (Config.Api.askTimeout).mapTo[DepositResult]
             onSuccess(result) {
               case DepositResult(_, Right(newAmount)) =>
-                ResponseBuilder.successNewAmount(newAmount)
+                ResponseBuilder.success(StatusCodes.OK, newAmount)
               case DepositResult(_, Left(InvalidDepositAmount)) =>
                 ResponseBuilder.failure(StatusCodes.BadRequest, "amount parameter is invalid")
               case DepositResult(_, Left(DepositExceedCapacity)) =>

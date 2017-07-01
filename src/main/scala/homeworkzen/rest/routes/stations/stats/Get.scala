@@ -19,7 +19,9 @@ object Get extends RestRoute {
         asAuthentified { userEntry: UserEntry =>
           val query = GetUserStats(userEntry.id)(context.system, context.materializer)
           onComplete(query) {
-            case Success(infos) => ResponseBuilder.successUserStats(StatusCodes.OK, infos)
+            case Success(infos) =>
+              import homeworkzen.rest.dto.model.UserStatsDTO._
+              ResponseBuilder.success(StatusCodes.OK, fromUserStats(infos))
             case Failure(_) => ResponseBuilder.internalServerError()
           }
         }
