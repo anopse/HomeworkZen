@@ -18,5 +18,9 @@ libraryDependencies += "com.typesafe.akka" %% "akka-cluster" % "2.5.3"
 libraryDependencies += "com.typesafe.akka" %% "akka-cluster-sharding" % "2.5.3"
 libraryDependencies += "com.typesafe.akka" %% "akka-cluster-tools" % "2.5.3"
 
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test"
+
+
 addCompilerPlugin("com.github.ghik" %% "silencer-plugin" % "0.5")
 libraryDependencies += "com.github.ghik" %% "silencer-lib" % "0.5"
