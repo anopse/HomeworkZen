@@ -6,16 +6,17 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
 import homeworkzen.domain.command.message._
-import homeworkzen.domain.utils.QueryHelper
 import homeworkzen.model._
 
 import scala.concurrent.Future
 
 object GetUnitHistory {
   def apply(userId: UserId, unitId: UnitId, from: Option[Instant], to: Option[Instant])
-           (implicit actorSystem: ActorSystem, actorMaterializer: ActorMaterializer): Future[Seq[(Instant, Long)]] = {
+           (implicit actorSystem: ActorSystem,
+            actorMaterializer: ActorMaterializer,
+            journalReader: JournalReader): Future[Seq[(Instant, Long)]] = {
     implicit val executionContext = actorSystem.dispatcher
-    val source = QueryHelper.currentEventsByTag(s"${unitId.id}")
+    val source = journalReader.currentEventsByTag(s"${unitId.id}")
     val history = source.map(_.event)
       .collect {
         case created: UnitCreatedEvent => created

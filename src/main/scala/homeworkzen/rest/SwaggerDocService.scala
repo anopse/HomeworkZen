@@ -16,6 +16,6 @@ class SwaggerDocService(implicit context: RestContext) extends SwaggerHttpServic
   override val securitySchemeDefinitions = Map("basicAuth" -> new BasicAuthDefinition())
   // url of swagger endpoint with default config is http://localhost:8080/api-docs/swagger.json
 
-  override implicit val actorSystem: ActorSystem = context.system
+  override implicit val actorSystem: ActorSystem = context.actorSystem
   override implicit val materializer: ActorMaterializer = context.materializer
 }

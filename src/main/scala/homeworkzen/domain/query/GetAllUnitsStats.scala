@@ -3,15 +3,15 @@ package homeworkzen.domain.query
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import homeworkzen.domain.command.message._
-import homeworkzen.domain.utils.QueryHelper
 import homeworkzen.model._
 
 import scala.concurrent.Future
 
 object GetAllUnitsStats {
   def apply(userId: UserId)(implicit actorSystem: ActorSystem,
-                            actorMaterializer: ActorMaterializer): Future[List[UnitStats]] = {
-    val source = QueryHelper.currentEventsByTag(s"${userId.id}")
+                            actorMaterializer: ActorMaterializer,
+                            journalReader: JournalReader): Future[List[UnitStats]] = {
+    val source = journalReader.currentEventsByTag(s"${userId.id}")
     source.map(_.event)
       .collect {
         case created: UnitCreatedEvent => created

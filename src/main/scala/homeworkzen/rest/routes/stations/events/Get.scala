@@ -22,7 +22,8 @@ object Get extends RestRoute {
       get {
         asAuthentified { entry: UserEntry =>
           complete {
-            GetEventStream(entry.id)(context.system)
+            import context._
+            GetEventStream(entry.id)
               .collect(EventMapper.modelEventToDTO)
               .collect(EventMapper.dtoToJson)
               .map(ServerSentEvent(_))

@@ -5,7 +5,6 @@ import java.util.UUID
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import homeworkzen.domain.command.message._
-import homeworkzen.domain.utils.QueryHelper
 import homeworkzen.model._
 
 import scala.concurrent.Future
@@ -14,8 +13,9 @@ import scala.concurrent.Future
 object GetAllUnits {
 
   def apply(user: UserId)(implicit actorSystem: ActorSystem,
-                          actorMaterializer: ActorMaterializer): Future[Seq[UnitInfo]] = {
-    val source = QueryHelper.currentEventsByTag(s"${user.id}")
+                          actorMaterializer: ActorMaterializer,
+                          journalReader: JournalReader): Future[Seq[UnitInfo]] = {
+    val source = journalReader.currentEventsByTag(s"${user.id}")
     source.map(_.event)
       .collect {
         case created: UnitCreatedEvent => created

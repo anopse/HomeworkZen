@@ -29,8 +29,9 @@ object Get extends RestRoute {
               } match {
                 case Success(to) =>
                   asAuthentified { entry: UserEntry =>
+                    import context._
                     val unitId = UnitId(stationId)
-                    val query = GetUnitHistory(entry.id, unitId, from, to)(context.system, context.materializer)
+                    val query = GetUnitHistory(entry.id, unitId, from, to)
                     onComplete(query) {
                       case Success(seq) =>
                         val values = seq.map(data => TimeStampedValueDTO(data._1, data._2)).toList

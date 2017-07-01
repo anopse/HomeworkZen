@@ -3,7 +3,6 @@ package homeworkzen.domain.query
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import homeworkzen.domain.command.message._
-import homeworkzen.domain.utils.QueryHelper
 import homeworkzen.model._
 
 import scala.concurrent.Future
@@ -11,8 +10,9 @@ import scala.concurrent.Future
 object GetSpecificUnit {
 
   def apply(userId: UserId, unitId: UnitId)(implicit actorSystem: ActorSystem,
-                                            actorMaterializer: ActorMaterializer): Future[Option[UnitInfo]] = {
-    val source = QueryHelper.currentEventsByTag(s"${unitId.id}")
+                                            actorMaterializer: ActorMaterializer,
+                                            journalReader: JournalReader): Future[Option[UnitInfo]] = {
+    val source = journalReader.currentEventsByTag(s"${unitId.id}")
     source.map(_.event)
       .collect {
         case created: UnitCreatedEvent => created

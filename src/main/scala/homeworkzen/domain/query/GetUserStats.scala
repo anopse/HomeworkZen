@@ -9,7 +9,8 @@ import scala.concurrent.Future
 
 object GetUserStats {
   def apply(userId: UserId)(implicit actorSystem: ActorSystem,
-                            actorMaterializer: ActorMaterializer): Future[UserStats] = {
+                            actorMaterializer: ActorMaterializer,
+                            journalReader: JournalReader): Future[UserStats] = {
     GetAllUnitsStats(userId).map(values => {
       val byType = values.groupBy(_.unitType)
         .mapValues(values => {

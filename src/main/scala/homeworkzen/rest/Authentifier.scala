@@ -20,8 +20,9 @@ object Authentifier {
   private def userPassAuthenticator(context: RestContext)(credentials: Credentials): Future[Option[UserEntry]] =
     credentials match {
       case p@Provided(username) =>
-        val result = GetUserEntry(username)(context.system, context.materializer)
-        result.map(_.filter(entry => p.verify(entry.secret, Hasher.apply)))(context.system.dispatcher)
+        import context._
+        val result = GetUserEntry(username)
+        result.map(_.filter(entry => p.verify(entry.secret, Hasher.apply)))(actorSystem.dispatcher)
       case _ => Future.successful(None)
     }
 

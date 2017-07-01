@@ -9,7 +9,7 @@ import scala.concurrent.Future
 
 object Routes {
   def bindRoutes(implicit context: RestContext): Future[Http.ServerBinding] = {
-    implicit val system = context.system
+    implicit val system = context.actorSystem
     implicit val materializer = context.materializer
     val rest = routes.map(_.route).reduce(_ ~ _)
     val swagger = SwaggerRoute.getRoute

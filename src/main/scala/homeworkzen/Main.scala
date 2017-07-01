@@ -6,6 +6,7 @@ import akka.cluster.Cluster
 import akka.stream.ActorMaterializer
 import homeworkzen.rest.RestContext
 import homeworkzen.clustering.{UserManagerSingleton, UserWorkerSharding}
+import homeworkzen.domain.query.JdbcJournalReader
 
 import scala.io.StdIn
 
@@ -15,10 +16,11 @@ object Main extends App {
     implicit val actorSystem = ActorSystem("homeworkzen")
     implicit val materializer = ActorMaterializer()
     implicit val executionContext = actorSystem.dispatcher
-    val userManager = UserManagerSingleton.register
-    val userCluster = UserWorkerSharding.register
+    implicit val userManager = UserManagerSingleton.register
+    implicit val userCluster = UserWorkerSharding.register
+    implicit val journalReader = new JdbcJournalReader
     //val clusterLogger = actorSystem.actorOf(Props(new ClusterLogger), "ClusterLogger")
-    implicit val restContext = RestContext(userManager, userCluster, actorSystem, materializer)
+    implicit val restContext = RestContext(userManager, userCluster)
     val httpBinding = homeworkzen.rest.Routes.bindRoutes
 
     CoordinatedShutdown(actorSystem).addTask(CoordinatedShutdown.PhaseServiceUnbind, "api unbind")(

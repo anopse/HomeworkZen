@@ -17,7 +17,8 @@ object Get extends RestRoute {
     path("stations") {
       get {
         asAuthentified { userEntry: UserEntry =>
-          val query = GetAllUnits(userEntry.id)(context.system, context.materializer)
+          import context._
+          val query = GetAllUnits(userEntry.id)
           onComplete(query) {
             case Success(infos) =>
               import homeworkzen.rest.dto.model.UnitInfoDTO._
