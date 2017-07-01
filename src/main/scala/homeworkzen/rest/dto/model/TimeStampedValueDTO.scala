@@ -1,4 +1,4 @@
-package homeworkzen.rest.dto
+package homeworkzen.rest.dto.model
 
 import java.time.Instant
 

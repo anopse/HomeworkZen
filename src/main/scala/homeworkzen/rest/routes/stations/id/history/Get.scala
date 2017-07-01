@@ -9,7 +9,7 @@ import homeworkzen.domain.query.GetUnitHistory
 import homeworkzen.model.{UnitId, UserEntry}
 import homeworkzen.rest.Authentifier.asAuthentified
 import homeworkzen.rest._
-import homeworkzen.rest.dto.TimeStampedValueDTO
+import homeworkzen.rest.dto.model.TimeStampedValueDTO
 import homeworkzen.util.TypeHelper
 
 import scala.reflect.runtime.universe.Type

@@ -8,7 +8,7 @@ import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 import akka.http.scaladsl.server.Directives.complete
 import akka.http.scaladsl.server.StandardRoute
 import homeworkzen.model._
-import homeworkzen.rest.dto._
+import homeworkzen.rest.dto.model._
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, RootJsonFormat}
 
 object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
@@ -70,15 +70,8 @@ object ResponseBuilder extends DefaultJsonProtocol with SprayJsonSupport {
   def internalServerError(): StandardRoute =
     complete(StatusCodes.InternalServerError -> "There was an internal server error.")
 
+  import homeworkzen.rest.dto.utils.NativeTypeJSONFormats._
 
-  private implicit val instantFormat = new RootJsonFormat[Instant] {
-    override def write(obj: Instant) = JsString(obj.toString)
-
-    override def read(json: JsValue): Instant = json match {
-      case JsString(str) => Instant.parse(str)
-      case _ => throw DeserializationException("Can't deerialize instant")
-    }
-  }
   private implicit val responseTemplateFormat: RootJsonFormat[ResponseTemplate] = jsonFormat2(ResponseTemplate)
   private implicit val idValuesResponseTemplateFormat: RootJsonFormat[IdValuesResponseTemplate] = jsonFormat3(IdValuesResponseTemplate)
   private implicit val singleIdResponseTemplateFormat: RootJsonFormat[SingleIdResponseTemplate] = jsonFormat3(SingleIdResponseTemplate)

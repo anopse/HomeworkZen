@@ -1,4 +1,4 @@
-package homeworkzen.rest.dto
+package homeworkzen.rest.dto.model
 
 import homeworkzen.model.UnitInfo
 

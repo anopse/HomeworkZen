@@ -28,7 +28,8 @@ object Routes {
       rest.routes.stations.id.withdraw.Post,
       rest.routes.stations.id.history.Get,
       rest.routes.stations.id.stats.Get,
-      rest.routes.stations.stats.Get
+      rest.routes.stations.stats.Get,
+      rest.routes.stations.events.Get
     )
 
 }
