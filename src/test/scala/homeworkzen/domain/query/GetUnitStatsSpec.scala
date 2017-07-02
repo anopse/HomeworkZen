@@ -3,7 +3,7 @@ package homeworkzen.domain.query
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
-import homeworkzen.domain.utils.{SourceBuilder, TestData}
+import homeworkzen.domain.utils._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 import scala.concurrent.duration._
@@ -11,7 +11,7 @@ import scala.concurrent.duration._
 import scala.concurrent.Await
 
 class GetUnitStatsSpec extends FlatSpec with Matchers with MockFactory {
-  private implicit val actorSystem = ActorSystem("test", ConfigFactory.empty())
+  private implicit val actorSystem = ActorSystem("test", ConfigPreset.default)
   private implicit val actorMaterializer = ActorMaterializer()
 
   "GetUnitStats" should "return None with an empty journal" in {

@@ -20,7 +20,7 @@ import org.scalamock.scalatest.MockFactory
 import scala.concurrent.Await
 
 class GetUserEntrySpec extends FlatSpec with Matchers with MockFactory {
-  private implicit val actorSystem = ActorSystem("test", ConfigFactory.empty())
+  private implicit val actorSystem = ActorSystem("test", ConfigPreset.default)
   private implicit val actorMaterializer = ActorMaterializer()
 
   "GetUserEntry" should "return None with an empty journal" in {

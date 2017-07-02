@@ -12,7 +12,7 @@ import org.scalamock.scalatest.MockFactory
 import scala.concurrent.Await
 
 class GetAllUnitsSpec extends FlatSpec with Matchers with MockFactory {
-  private implicit val actorSystem = ActorSystem("test", ConfigFactory.empty())
+  private implicit val actorSystem = ActorSystem("test", ConfigPreset.default)
   private implicit val actorMaterializer = ActorMaterializer()
 
   "GetAllUnits" should "return empty collection with an empty journal" in {

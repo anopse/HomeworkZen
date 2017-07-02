@@ -22,6 +22,9 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="SBT: ch.qos.logback:logback-classic:1.2.3:jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="SBT: org.scalaz:scalaz-core_2.12:7.2.12:jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="SBT: com.typesafe.akka:akka-testkit_2.12:2.5.3:jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="SBT: com.github.dnvriend:akka-persistence-inmemory_2.12:2.5.1.1:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="SBT: org.scalamock:scalamock-scalatest-support_2.12:3.6.0:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="SBT: org.scalamock:scalamock-core_2.12:3.6.0:jar" level="project" />
     <orderEntry type="library" name="SBT: org.ow2.asm:asm-util:5.0.3:jar" level="project" />

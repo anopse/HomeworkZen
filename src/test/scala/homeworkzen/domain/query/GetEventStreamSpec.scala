@@ -13,7 +13,7 @@ import org.scalamock.scalatest.MockFactory
 import scala.concurrent.Await
 
 class GetEventStreamSpec extends FlatSpec with Matchers with MockFactory {
-  private implicit val actorSystem = ActorSystem("test", ConfigFactory.empty())
+  private implicit val actorSystem = ActorSystem("test", ConfigPreset.default)
   private implicit val actorMaterializer = ActorMaterializer()
 
   "GetEventStream" should "only return events sent into source that match user" in {

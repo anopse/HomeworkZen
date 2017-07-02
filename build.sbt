@@ -20,7 +20,8 @@ libraryDependencies += "com.typesafe.akka" %% "akka-cluster-tools" % "2.5.3"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test"
-
+libraryDependencies += "com.github.dnvriend" %% "akka-persistence-inmemory" % "2.5.1.1" % "test"
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.5.3" % "test"
 
 addCompilerPlugin("com.github.ghik" %% "silencer-plugin" % "0.5")
 libraryDependencies += "com.github.ghik" %% "silencer-lib" % "0.5"
