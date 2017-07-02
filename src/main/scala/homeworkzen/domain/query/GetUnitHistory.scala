@@ -50,7 +50,7 @@ object GetUnitHistory {
 
     val historyFromTo = to match {
       case None => historyFrom
-      case Some(toDate) => historyFrom.map(_.takeWhile(_._1.compareTo(toDate) < 0))
+      case Some(toDate) => historyFrom.map(_.takeWhile(_._1.compareTo(toDate) <= 0))
     }
     historyFromTo
   }

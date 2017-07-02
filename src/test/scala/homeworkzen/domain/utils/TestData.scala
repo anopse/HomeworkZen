@@ -60,7 +60,55 @@ object TestData {
       val stats = UnitStats(unitId, unitType, totalConsumed, totalGenerated)
     }
 
-    val units = Seq(justCreatedUnit, unitWithOperations)
+    val unitWithHistoryData = new {
+      val unitType = UnitType.Solar
+      val unitId = UnitId(UUID.fromString("5d318bb8-09d8-4597-a23f-8f8101199c06"))
+      val maximumAmount = 1000
+      val unitCreationInstant: Instant = Instant.parse("2010-02-01T10:03:00Z")
+      val creationEvent = UnitCreatedEvent(unitCreationInstant, userId, unitId, maximumAmount, unitType)
+      val unitTag: String = unitId.id.toString
+      val deposits: Seq[DepositEvent] = Seq(
+        DepositEvent(Instant.parse("2010-02-01T10:04:00Z"), userId, unitId, 300),
+        DepositEvent(Instant.parse("2010-02-01T10:05:00Z"), userId, unitId, 500)
+      )
+      val withdrawals: Seq[WithdrawEvent] = Seq(
+        WithdrawEvent(Instant.parse("2010-02-01T10:06:00Z"), userId, unitId, 100),
+        WithdrawEvent(Instant.parse("2010-02-01T10:07:00Z"), userId, unitId, 400)
+      )
+      val journal: Seq[Event] = Seq(creationEvent) ++ deposits ++ withdrawals
+      val initialAmount: Long = deposits.map(_.amountDeposited).sum - withdrawals.map(_.amountWithdrawn).sum
+      val unitInfo: UnitInfo = UnitInfo(unitId, unitType, maximumAmount, initialAmount)
+      val totalConsumed = withdrawals.map(_.amountWithdrawn).sum
+      val totalGenerated = deposits.map(_.amountDeposited).sum
+      val stats = UnitStats(unitId, unitType, totalConsumed, totalGenerated)
+
+      val completeHistory: Seq[(Instant, Long)] = Seq(
+        (unitCreationInstant, 0),
+        (deposits.head.timestamp, 300),
+        (deposits(1).timestamp, 800),
+        (withdrawals.head.timestamp, 700),
+        (withdrawals(1).timestamp, 300)
+      )
+
+      val partialHistory1From = Some(Instant.parse("2010-02-01T10:05:30Z"))
+      val partialHistory1To = None
+      val partialHistory1: Seq[(Instant, Long)] = Seq(
+        (partialHistory1From.get, 800),
+        (withdrawals.head.timestamp, 700),
+        (withdrawals(1).timestamp, 300)
+      )
+
+      val partialHistory2From = None
+      val partialHistory2To = Some(withdrawals.head.timestamp)
+      val partialHistory2: Seq[(Instant, Long)] = Seq(
+        (unitCreationInstant, 0),
+        (deposits.head.timestamp, 300),
+        (deposits(1).timestamp, 800),
+        (withdrawals.head.timestamp, 700)
+      )
+    }
+
+    val units = Seq(justCreatedUnit, unitWithOperations, unitWithHistoryData)
     val statsByUnitType = units.groupBy(_.unitType).mapValues(values => {
       val totalConsumed = values.map(_.totalConsumed).sum
       val totalGenerated = values.map(_.totalGenerated).sum
