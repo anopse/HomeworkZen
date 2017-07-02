@@ -38,5 +38,5 @@ sealed class UserManager extends PersistentActor {
     }
   }
 
-  override def persistenceId: String = "UserManager"
+  override def persistenceId: String = self.path.parent.name + "-" + self.path.name
 }
