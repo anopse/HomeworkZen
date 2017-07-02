@@ -22,6 +22,7 @@ object GetAllUnits {
         case withdraw: WithdrawEvent => withdraw
         case deposit: DepositEvent => deposit
       }
+      .filter(_.userId == user)
       .runFold(Map.empty: Map[UUID, UnitInfo])((map, event) =>
         event match {
           case created: UnitCreatedEvent => map +
