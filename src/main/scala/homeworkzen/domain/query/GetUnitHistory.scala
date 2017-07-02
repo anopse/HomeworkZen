@@ -23,7 +23,7 @@ object GetUnitHistory {
         case withdraw: WithdrawEvent => withdraw
         case deposit: DepositEvent => deposit
       }
-      .filter(_.userId == userId)
+      .filter(event => event.userId == userId && event.unitId == unitId)
       .scan((Instant.MIN, 0l))((state, event) =>
         event match {
           case created: UnitCreatedEvent => (created.timestamp, 0l)
