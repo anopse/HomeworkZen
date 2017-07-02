@@ -32,6 +32,9 @@ object TestData {
       val journal: Seq[Event] = Seq(creationEvent) ++ deposits ++ withdrawals
       val initialAmount: Long = deposits.map(_.amountDeposited).sum - withdrawals.map(_.amountWithdrawn).sum
       val unitInfo: UnitInfo = UnitInfo(unitId, unitType, maximumAmount, initialAmount)
+      val totalConsumed = withdrawals.map(_.amountWithdrawn).sum
+      val totalGenerated = deposits.map(_.amountDeposited).sum
+      val stats = UnitStats(unitId, unitType, totalConsumed, totalGenerated)
     }
 
     val unitWithOperations = new {
@@ -52,9 +55,25 @@ object TestData {
       val journal: Seq[Event] = Seq(creationEvent) ++ deposits ++ withdrawals
       val initialAmount: Long = deposits.map(_.amountDeposited).sum - withdrawals.map(_.amountWithdrawn).sum
       val unitInfo: UnitInfo = UnitInfo(unitId, unitType, maximumAmount, initialAmount)
+      val totalConsumed = withdrawals.map(_.amountWithdrawn).sum
+      val totalGenerated = deposits.map(_.amountDeposited).sum
+      val stats = UnitStats(unitId, unitType, totalConsumed, totalGenerated)
     }
 
     val units = Seq(justCreatedUnit, unitWithOperations)
+    val statsByUnitType = units.groupBy(_.unitType).mapValues(values => {
+      val totalConsumed = values.map(_.totalConsumed).sum
+      val totalGenerated = values.map(_.totalGenerated).sum
+      val count = values.length
+      GroupedStats(totalConsumed, totalGenerated, count)
+    })
+    val globalStat = {
+      val totalConsumed = units.map(_.totalConsumed).sum
+      val totalGenerated = units.map(_.totalGenerated).sum
+      val count = units.length
+      GroupedStats(totalConsumed, totalGenerated, count)
+    }
+    val stats = UserStats(globalStat, statsByUnitType, units.map(_.stats))
     val usernameJournal: Seq[Event] = Seq(creationEvent)
     val userIdJournal: Seq[Event] = usernameJournal ++ units.flatMap(_.journal)
   }
@@ -71,6 +90,19 @@ object TestData {
     val userIdTag: String = userId.id.toString
 
     val units = userWithUnits.units.filter(_ => false) // typed empty seq
+    val statsByUnitType = units.groupBy(_.unitType).mapValues(values => {
+      val totalConsumed = values.map(_.totalConsumed).sum
+      val totalGenerated = values.map(_.totalGenerated).sum
+      val count = values.length
+      GroupedStats(totalConsumed, totalGenerated, count)
+    })
+    val globalStat = {
+      val totalConsumed = units.map(_.totalConsumed).sum
+      val totalGenerated = units.map(_.totalGenerated).sum
+      val count = units.length
+      GroupedStats(totalConsumed, totalGenerated, count)
+    }
+    val stats = UserStats(globalStat, statsByUnitType, units.map(_.stats))
     val usernameJournal: Seq[Event] = Seq(creationEvent)
     val userIdJournal: Seq[Event] = usernameJournal ++ units.flatMap(_.journal)
   }
@@ -87,6 +119,19 @@ object TestData {
     val userIdTag: String = userId.id.toString
 
     val units = userWithUnits.units.filter(_ => false) // typed empty seq
+    val statsByUnitType = units.groupBy(_.unitType).mapValues(values => {
+      val totalConsumed = values.map(_.totalConsumed).sum
+      val totalGenerated = values.map(_.totalGenerated).sum
+      val count = values.length
+      GroupedStats(totalConsumed, totalGenerated, count)
+    })
+    val globalStat = {
+      val totalConsumed = units.map(_.totalConsumed).sum
+      val totalGenerated = units.map(_.totalGenerated).sum
+      val count = units.length
+      GroupedStats(totalConsumed, totalGenerated, count)
+    }
+    val stats = UserStats(globalStat, statsByUnitType, units.map(_.stats))
     val usernameJournal: Seq[Event] = Seq(creationEvent)
     val userIdJournal: Seq[Event] = usernameJournal ++ units.flatMap(_.journal)
   }
@@ -114,6 +159,9 @@ object TestData {
       val journal: Seq[Event] = Seq(creationEvent) ++ deposits ++ withdrawals
       val initialAmount: Long = deposits.map(_.amountDeposited).sum - withdrawals.map(_.amountWithdrawn).sum
       val unitInfo: UnitInfo = UnitInfo(unitId, unitType, maximumAmount, initialAmount)
+      val totalConsumed = withdrawals.map(_.amountWithdrawn).sum
+      val totalGenerated = deposits.map(_.amountDeposited).sum
+      val stats = UnitStats(unitId, unitType, totalConsumed, totalGenerated)
     }
 
     val unitWithOperations = new {
@@ -134,13 +182,33 @@ object TestData {
       val journal: Seq[Event] = Seq(creationEvent) ++ deposits ++ withdrawals
       val initialAmount: Long = deposits.map(_.amountDeposited).sum - withdrawals.map(_.amountWithdrawn).sum
       val unitInfo: UnitInfo = UnitInfo(unitId, unitType, maximumAmount, initialAmount)
+      val totalConsumed = withdrawals.map(_.amountWithdrawn).sum
+      val totalGenerated = deposits.map(_.amountDeposited).sum
+      val stats = UnitStats(unitId, unitType, totalConsumed, totalGenerated)
     }
 
     val units = Seq(justCreatedUnit, unitWithOperations)
+    val statsByUnitType = units.groupBy(_.unitType).mapValues(values => {
+      val totalConsumed = values.map(_.totalConsumed).sum
+      val totalGenerated = values.map(_.totalGenerated).sum
+      val count = values.length
+      GroupedStats(totalConsumed, totalGenerated, count)
+    })
+    val globalStat = {
+      val totalConsumed = units.map(_.totalConsumed).sum
+      val totalGenerated = units.map(_.totalGenerated).sum
+      val count = units.length
+      GroupedStats(totalConsumed, totalGenerated, count)
+    }
+    val stats = UserStats(globalStat, statsByUnitType, units.map(_.stats))
     val usernameJournal: Seq[Event] = Seq(creationEvent)
     val userIdJournal: Seq[Event] = usernameJournal ++ units.flatMap(_.journal)
   }
 
   val users = Seq(userWithUnits, userWithoutUnits, anotherUserWithoutUnits, anotherUserWithUnits)
   val globalJournal = users.flatMap(_.userIdJournal)
+
+  val specialValues = new {
+    val emptyUserStats = UserStats(GroupedStats(0, 0, 0), Map.empty, List.empty)
+  }
 }

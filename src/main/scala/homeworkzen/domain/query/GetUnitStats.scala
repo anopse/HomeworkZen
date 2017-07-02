@@ -19,7 +19,7 @@ object GetUnitStats {
         case withdraw: WithdrawEvent => withdraw
         case deposit: DepositEvent => deposit
       }
-      .filter(_.userId == userId)
+      .filter(event => event.userId == userId && event.unitId == unitId)
       .runFold(None: Option[UnitStats])((current, event) =>
         event match {
           case created: UnitCreatedEvent =>
