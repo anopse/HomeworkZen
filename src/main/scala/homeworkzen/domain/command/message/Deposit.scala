@@ -19,7 +19,7 @@ case class DepositCommand(userId: UserId, unitId: UnitId, amountToDeposit: Long)
   val userForwardFailureMessage = DepositResult(this, Left(DepositUserNotFound))
 }
 
-// todo : document somehow that Long result is the new amount available
+// error or new amount available
 case class DepositResult(request: DepositCommand, result: Either[DepositError, Long])
 
 case class DepositEvent(timestamp: Instant, userId: UserId, unitId: UnitId, amountDeposited: Long) extends UnitEvent

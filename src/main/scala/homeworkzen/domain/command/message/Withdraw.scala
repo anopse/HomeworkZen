@@ -19,7 +19,7 @@ case class WithdrawCommand(userId: UserId, unitId: UnitId, amountToWithdraw: Lon
   val userForwardFailureMessage = WithdrawResult(this, Left(WithdrawUserNotFound))
 }
 
-// todo : document somehow that Long result is the new amount available
+// error or new amount available
 case class WithdrawResult(request: WithdrawCommand, result: Either[WithdrawError, Long])
 
 case class WithdrawEvent(timestamp: Instant, userId: UserId, unitId: UnitId, amountWithdrawn: Long) extends UnitEvent
